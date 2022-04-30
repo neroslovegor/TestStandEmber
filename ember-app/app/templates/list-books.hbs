@@ -1,0 +1,73 @@
+<script>
+    function getBooks(method, url){
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+
+            xhr.open(method, url);
+            xhr.onload = () => {
+                if (xhr.status >= 400){
+                    reject(xhr.response);
+                } else {
+                    resolve(xhr.response);
+                }
+            }
+            xhr.onerror = () => {
+                reject(xhr.response);
+            }
+            xhr.send();
+        });
+    }
+
+    function getListBooks(str){
+        var str1 = str.substr(0, str.length - 1);
+        var str2 = str1.substr(1, str1.length);
+        const json = str2;
+        //const parsed = JSON.parse(json);
+        //const parsed = JSON.parse(str2);
+
+        const parsed = JSON.parse(json);
+        createTable(parsed);
+    }
+
+    function createTable(str) {
+        var elem = document.querySelector('#listBooks');
+        var table = document.createElement('table');
+
+        str.forEach(function(item) {
+            //console.log(item.ID + "," + item.Name + "," + item.Author + "," + item.Pages);
+            var tr = document.createElement('tr');   
+
+            var th = document.createElement('th');
+            var td1 = document.createElement('td');
+            var td2 = document.createElement('td');
+            var td3 = document.createElement('td');
+
+            var text = document.createTextNode(item.ID );
+            var text1 = document.createTextNode(item.Name);
+            var text2 = document.createTextNode(item.Author);
+            var text3 = document.createTextNode(item.Pages);
+
+            th.appendChild(text);
+            td1.appendChild(text1);
+            td2.appendChild(text2);
+            td3.appendChild(text3);
+            tr.appendChild(th);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+
+            table.appendChild(tr);
+        });
+
+        elem.appendChild(table);
+    }
+</script>
+<main class="container mt-5">
+    <h1>Список книг</h1>
+    <div id="listBooks"></div>
+    <script>
+        getBooks('GET', 'https://teststand.t-mobis.ru/Books')
+        .then(data => getListBooks(data))
+        .catch(err => console.log(err));
+    </script>
+</main>
